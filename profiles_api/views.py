@@ -1,6 +1,9 @@
+from email import message
+from unicodedata import name
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
 
 from profiles_api import serializer
 
@@ -40,3 +43,34 @@ class HelloWorldAPI(APIView):
         return Response({'method':'PATCH'})
     def delete(self,request,pk=None):
         return Response({'method':'DELETE'})
+
+class HelloAPI(viewsets.ViewSet):
+    serializer_class = serializer.HelloWorldSerializer
+    def list(self,request,pk=None):
+        api=[
+        "Shabuddin Pre-Cadet School",
+        "Chilld Laboratory School",
+        "Adarsha School Narayonganj",
+        "Govt. Tolaram College",
+        "Patuakhali Science and Technology University",
+    ]
+        return Response({'message':'Hello','api':api})
+    def create(self,request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello{name}!'
+            return Response({'message':message})
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    def retrieve(self,request,pk=None):
+        return Response({'http_method':'GET'})
+    def update(self,request,pk=None):
+        return Response({'http_method':'PUT'})
+    def partial_update(self,request,pk=None):
+        return Response({'http_method':'PATCH'})
+    def destroy(self,request,pk=None):
+        return Response({'http_method':'DELETE'})
